@@ -3,6 +3,7 @@ package com.example.android.sunshine.app;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,6 +13,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -75,6 +81,29 @@ public class MainActivity extends ActionBarActivity {
             ListView weatherList = (ListView) rootView.findViewById(R.id.listview_forecast);
 
             weatherList.setAdapter(listAdapter);
+
+            HttpURLConnection urlConnection = null;
+            String forecastJson = null;
+
+            try{
+                URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=94043" +
+                        "&mode=json&units=metric&cnt=7&appid=c09942ecfc5be500fbbe8f1921763374");
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                InputStream stream = new BufferedInputStream(urlConnection.getInputStream());
+                forecastJson = stream.toString();
+
+            } catch (IOException e) {
+                Log.e("PlaceholderFragment", "Error", e);
+            }
+            finally {
+                if (urlConnection != null){
+                    urlConnection.disconnect();
+                }
+            }
 
             return rootView;
         }
