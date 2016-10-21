@@ -1,10 +1,13 @@
 package com.example.android.sunshine.app;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,15 +35,30 @@ public class ForecastFragment extends Fragment {
     public ForecastFragment() {
     }
 
+    @Override
     public boolean onOptionsItemSelected(MenuItem item){
-        int id = item.getItemId();
-
-        if (id == R.id.action_refresh){
+        if(R.id.action_refresh == item.getItemId()){
+            FetchWeatherTask refresh = new FetchWeatherTask();
+            refresh.execute("91205");
             return true;
-        }
 
+        }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onCreateOptionsMenu (Menu menu, MenuInflater inflater){
+        inflater.inflate(R.menu.forecastfragment, menu);
+    }
+
+    @Override //this runs when
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        //This makes onCreateOptionsMenu from this fragment to be called by main activity, and
+        //thus visible
+        setHasOptionsMenu(true);
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,23 +75,38 @@ public class ForecastFragment extends Fragment {
         weatherList.setAdapter(listAdapter);
 
         FetchWeatherTask download = new FetchWeatherTask();
-        download.execute();
+        download.execute("91205");
+
+
 
         return rootView;
     }
 
-    public class FetchWeatherTask extends AsyncTask<URL, Integer, String>{
+    public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
         private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
         @Override
-        protected String doInBackground(URL[] urls){
+        protected Void doInBackground(String... params){
+
+            if (params.length == 0){
+                return null;
+            }
+
             HttpURLConnection urlConnection = null;
             String forecastJson = null;
 
 
             try {
-                URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=94043" +
-                        "&mode=json&units=metric&cnt=7&appid=c09942ecfc5be500fbbe8f1921763374");
+                URL url = new URL(Uri.parse("http://api.openweathermap.org/data/2.5/forecast/daily").buildUpon()
+                    .appendQueryParameter("q", params[0])
+                    .appendQueryParameter("appid", "c09942ecfc5be500fbbe8f1921763374")
+                    .appendQueryParameter("cnt", "7")
+                    .appendQueryParameter("units", "metric")
+                    .appendQueryParameter("mode", "json")
+                    .build().toString());
+
+//                URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=94043" +
+//                        "&mode=json&units=metric&cnt=7&appid=c09942ecfc5be500fbbe8f1921763374");
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -94,7 +127,8 @@ public class ForecastFragment extends Fragment {
                     urlConnection.disconnect();
                 }
             }
-            return forecastJson;
+            //return forecastJson;
+            return null;
         }
     }
 }
