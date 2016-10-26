@@ -1,5 +1,6 @@
 package com.example.android.sunshine.app;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,8 +13,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -85,9 +88,20 @@ public class ForecastFragment extends Fragment {
         FetchWeatherTask download = new FetchWeatherTask();
         download.execute("91205");
 
-
+        switchToDetailed a = new switchToDetailed();
+        weatherList.setOnItemClickListener(a);
 
         return rootView;
+    }
+
+    private class switchToDetailed implements AdapterView.OnItemClickListener {
+
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+//            Toast toast = Toast.makeText(view.getContext(), "Item clicked", Toast.LENGTH_LONG);
+//            toast.show();
+            Intent detailActivity = new Intent(getActivity(), DetailActivity.class);
+            startActivity(detailActivity);
+        }
     }
 
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
@@ -256,6 +270,7 @@ public class ForecastFragment extends Fragment {
             //return forecastJson;
             return null;
         }
+
 
         @Override
         protected void onPostExecute(String... strings) {
