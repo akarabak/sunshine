@@ -99,7 +99,9 @@ public class ForecastFragment extends Fragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id){
 //            Toast toast = Toast.makeText(view.getContext(), "Item clicked", Toast.LENGTH_LONG);
 //            toast.show();
-            Intent detailActivity = new Intent(getActivity(), DetailActivity.class);
+            String forecast = listAdapter.getItem(position);
+            Intent detailActivity = new Intent(getActivity(), DetailActivity.class)
+                    .putExtra(Intent.EXTRA_TEXT, forecast);
             startActivity(detailActivity);
         }
     }
