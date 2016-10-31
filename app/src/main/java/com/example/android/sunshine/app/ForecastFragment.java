@@ -50,7 +50,7 @@ public class ForecastFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item){
         if(R.id.action_refresh == item.getItemId()){
             FetchWeatherTask refresh = new FetchWeatherTask();
-            refresh.execute("91205");
+            refresh.execute("91205,us");
             return true;
 
         }
@@ -100,6 +100,7 @@ public class ForecastFragment extends Fragment {
 //            Toast toast = Toast.makeText(view.getContext(), "Item clicked", Toast.LENGTH_LONG);
 //            toast.show();
             String forecast = listAdapter.getItem(position);
+
             Intent detailActivity = new Intent(getActivity(), DetailActivity.class)
                     .putExtra(Intent.EXTRA_TEXT, forecast);
             startActivity(detailActivity);
@@ -228,9 +229,6 @@ public class ForecastFragment extends Fragment {
                     .appendQueryParameter("mode", "json")
                     .build().toString());
 
-//                URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=94043" +
-//                        "&mode=json&units=metric&cnt=7&appid=c09942ecfc5be500fbbe8f1921763374");
-
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
@@ -249,6 +247,7 @@ public class ForecastFragment extends Fragment {
                 forecastJson = buffer.toString();
                 //double max = WeatherDataParser.getMaxTemperatureForDay(forecastJson, 0);
                 //Log.v(LOG_TAG, "temp max: " + max);
+                Log.v(LOG_TAG, forecastJson);
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error", e);

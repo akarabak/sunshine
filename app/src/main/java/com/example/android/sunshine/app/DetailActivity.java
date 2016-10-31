@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 public class DetailActivity extends ActionBarActivity {
 
@@ -34,6 +35,8 @@ public class DetailActivity extends ActionBarActivity {
 
             if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)){
                 String forecast = intent.getStringExtra(Intent.EXTRA_TEXT);
+                TextView textView = (TextView) rootView.findViewById(R.id.detail_text);
+                textView.setText(forecast);
             }
 
 
